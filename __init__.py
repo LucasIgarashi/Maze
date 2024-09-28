@@ -1,4 +1,4 @@
-from pyamaze import maze, agent, COLOR, textLabel
+from pyamaze import maze, agent, COLOR
 from collections import deque
 
 def Maze(m, method):
@@ -10,9 +10,9 @@ def Maze(m, method):
 
     def BFSSuccessor(cell, visited):
         queue = deque([cell]) #fila com as coordenadas
-        path = {}
-        while queue:
-            curr_cell = queue.popleft() #acessa os da fila (First in Fisrt Out)
+        path = {} #
+        while len(queue) > 0:
+            curr_cell = queue.popleft() #acessa os valores da fila (First in Fisrt Out)
             if test(curr_cell):
                 print('Saída Encontrada!!!')
                 break
@@ -28,7 +28,6 @@ def Maze(m, method):
                     path[child_cell] = curr_cell
         return path
 
-
     def BFS(cell):
         visited = [cell]
         path = BFSSuccessor(cell, visited)
@@ -41,12 +40,11 @@ def Maze(m, method):
             steps += 1
         return inverted_path, steps
 
-
     def DFSSuccessor(cell, visited):
         stack = [cell] #pilha com as coordenadas
         path = {}
         while len(stack) > 0:
-            curr_cell = stack.pop() #Acessa os valores da pilha (Last In First Out)
+            curr_cell = stack.pop() #acessa os valores da pilha (Last In First Out)
             if test(curr_cell):
                 print('Saída Encontrada!!!')
                 break
@@ -62,7 +60,6 @@ def Maze(m, method):
                     path[child_cell] = curr_cell
         return path
 
-
     def DFS(cell):
         visited=[cell]
         node = goal
@@ -75,15 +72,11 @@ def Maze(m, method):
             steps += 1
         return inverted_path, steps
 
-
     if method == 'BFS':
-        path, _ = BFS(start)
+        path, step = BFS(start)
     elif method == 'DFS':
-        path, _ = DFS(start)
-    return path
-
-
-
+        path, step = DFS(start)
+    return path, step
 
 if __name__=='__main__':
     r = int(input('Insira a quantidade desejada de linhas: '))
@@ -97,37 +90,35 @@ if __name__=='__main__':
 
     if choose == 1:
         m = maze(r, c)
-        m.CreateMaze(loopPercent=20)
-        path = Maze(m, 'BFS')
+        m.CreateMaze(loopPercent=15)
+        path, step = Maze(m, 'BFS')
         a = agent(m, footprints=True, color=COLOR.blue)
-        print('------------------------------------------------------------------------------')
+
         m.tracePath({a: path})
-        l=textLabel(m, 'O menor caminho dado pelo método DFS é: ', len(path)+1)
+        print(f'Custo de passos: {step}')
         m.run()
 
     elif choose == 2:
         m = maze(r, c)
-        m.CreateMaze(loopPercent=20)
-        path = Maze(m, 'DFS')
+        m.CreateMaze(loopPercent=15)
+        path, step = Maze(m, 'DFS')
         a = agent(m, footprints=True, color=COLOR.yellow)
-        print('------------------------------------------------------------------------------')
+
         m.tracePath({a: path})
-        l=textLabel(m, 'O menor caminho dado pelo método DFS é: ', len(path)+1)
+        print(f'Custo de passos: {step}')
         m.run()
 
     elif choose == 3:
         m = maze(r, c)
-        m.CreateMaze(loopPercent=20)
-        path_bfs = Maze(m, 'BFS')
-        path_dfs = Maze(m, 'DFS')
+        m.CreateMaze(loopPercent=15)
+        path_bfs, step_bfs = Maze(m, 'BFS')
+        path_dfs, step_dfs = Maze(m, 'DFS')
         a = agent(m, footprints=True, color=COLOR.blue)
         b = agent(m, footprints=True, color=COLOR.yellow)
 
-        print('------------------------------------------------------------------------------')
         m.tracePath({a: path_bfs})
         m.tracePath({b: path_dfs})
-        l_bfs = textLabel(m, 'BFS - AZUL\nO menor caminho dado pelo método BFS é: ', len(path_bfs) + 1)
-        l_dfs = textLabel(m, 'DFS - AMARELO\nO menor caminho dado pelo método DFS é: ', len(path_dfs) + 1)
+        print(f'\nCusto de passos pela BFS: {step_bfs}\nCusto de passos pela DFS: {step_dfs}')
         m.run()
 
     elif choose == 4:
